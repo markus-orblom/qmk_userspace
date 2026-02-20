@@ -15,19 +15,12 @@ enum charybdis_keymap_layers {
 #define ENT_LFT LT(LAYER_LEFT, KC_ENT)
 #define _L_PTR(KC) LT(LAYER_POINTER, KC)
 
-enum unicode_names {
-    U_ARNG_L, // å U+00E5
-    U_ARNG_U, // Å U+00C5
-    U_ADIA_L, // ä U+00E4
-    U_ADIA_U, // Ä U+00C4
-    U_ODIA_L, // ö U+00F6
-    U_ODIA_U, // Ö U+00D6
-};
-
-const uint32_t PROGMEM unicode_map[] = {
-    [U_ARNG_L] = 0x00E5, [U_ARNG_U] = 0x00C5,
-    [U_ADIA_L] = 0x00E4, [U_ADIA_U] = 0x00C4,
-    [U_ODIA_L] = 0x00F6, [U_ODIA_U] = 0x00D6,
+// Swedish characters via macOS Option key sequences (US/ABC layout).
+// å = Option+A, ä = Option+U then A, ö = Option+U then O.
+enum custom_keycodes {
+    SE_ARNG = SAFE_RANGE, // å/Å
+    SE_ADIA,              // ä/Ä
+    SE_ODIA,              // ö/Ö
 };
 
 #ifndef POINTING_DEVICE_ENABLE
@@ -69,7 +62,7 @@ const uint32_t PROGMEM unicode_map[] = {
  * ESC on Q, minus on A, arrows on right home row, PgDn/PgUp below, [ on P.
  */
 #define LAYOUT_LAYER_LEFT                                                                     \
-     KC_ESC, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, UP(U_ARNG_L, U_ARNG_U), UP(U_ADIA_L, U_ADIA_U), UP(U_ODIA_L, U_ODIA_U), \
+     KC_ESC, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, SE_ARNG, SE_ADIA, SE_ODIA, \
     KC_MINS, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,  KC_INS, KC_LEFT, KC_DOWN,   KC_UP, KC_RGHT, \
     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_PGDN, KC_PGUP, XXXXXXX, \
                       _______, _______, _______, _______, _______
@@ -153,4 +146,69 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 #endif     // POINTING_DEVICE_ENABLE
 
     return state;
+}
+
+// Send Swedish characters via macOS Option key sequences.
+// å = Option+A, Å = Option+Shift+A
+// ä = Option+U (dead key) then A, Ä = Option+U then Shift+A
+// ö = Option+U (dead key) then O, Ö = Option+U then Shift+O
+static void send_swedish_char(uint16_t keycode, bool shifted) {
+    // Save and clear current mods so they don't interfere.
+    uint8_t saved_mods = get_mods();
+    clear_mods();
+
+    switch (keycode) {
+        case SE_ARNG:
+            if (shifted) {
+                register_mods(MOD_BIT(KC_LALT) | MOD_BIT(KC_LSFT));
+                tap_code(KC_A);
+                unregister_mods(MOD_BIT(KC_LALT) | MOD_BIT(KC_LSFT));
+            } else {
+                register_mods(MOD_BIT(KC_LALT));
+                tap_code(KC_A);
+                unregister_mods(MOD_BIT(KC_LALT));
+            }
+            break;
+        case SE_ADIA:
+            // Option+U produces the umlaut dead key, then type the base letter.
+            register_mods(MOD_BIT(KC_LALT));
+            tap_code(KC_U);
+            unregister_mods(MOD_BIT(KC_LALT));
+            if (shifted) {
+                register_mods(MOD_BIT(KC_LSFT));
+                tap_code(KC_A);
+                unregister_mods(MOD_BIT(KC_LSFT));
+            } else {
+                tap_code(KC_A);
+            }
+            break;
+        case SE_ODIA:
+            register_mods(MOD_BIT(KC_LALT));
+            tap_code(KC_U);
+            unregister_mods(MOD_BIT(KC_LALT));
+            if (shifted) {
+                register_mods(MOD_BIT(KC_LSFT));
+                tap_code(KC_O);
+                unregister_mods(MOD_BIT(KC_LSFT));
+            } else {
+                tap_code(KC_O);
+            }
+            break;
+    }
+
+    // Restore original mods.
+    set_mods(saved_mods);
+}
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case SE_ARNG:
+        case SE_ADIA:
+        case SE_ODIA:
+            if (record->event.pressed) {
+                send_swedish_char(keycode, get_mods() & MOD_MASK_SHIFT);
+            }
+            return false;
+    }
+    return true;
 }
