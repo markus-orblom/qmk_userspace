@@ -7,3 +7,5 @@
 #ifndef __arm__
 #    define NO_ACTION_ONESHOT
 #endif // __arm__
+
+#define UNICODE_SELECTED_MODES UNICODE_MODE_MACOS
