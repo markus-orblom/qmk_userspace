@@ -25,6 +25,7 @@ enum custom_keycodes {
 
 #ifndef POINTING_DEVICE_ENABLE
 #    define DRGSCRL KC_NO
+#    define DRG_TOG KC_NO
 #    define DPI_MOD KC_NO
 #    define S_D_MOD KC_NO
 #    define SNIPING KC_NO
@@ -51,7 +52,7 @@ enum custom_keycodes {
  * Right hand: numpad layout (7-9, 4-6, 1-3, 0) + = ; operators
  */
 #define LAYOUT_LAYER_RIGHT                                                                    \
-    KC_EXLM,   KC_AT, KC_LCBR, KC_RCBR, KC_BSLS, KC_SLSH,    KC_7,    KC_8,    KC_9,  KC_EQL, \
+    KC_EXCL,   KC_AT, KC_LCBR, KC_RCBR, KC_BSLS, KC_SLSH,    KC_7,    KC_8,    KC_9,  KC_EQL, \
     KC_HASH,  KC_DLR, KC_LBRC, KC_RBRC,  KC_GRV, KC_ASTR,    KC_4,    KC_5,    KC_6, KC_SCLN, \
     KC_PERC, KC_CIRC, KC_LPRN, KC_RPRN, KC_TILD, KC_AMPR,    KC_1,    KC_2,    KC_3,    KC_0, \
                       _______, _______, _______, _______,  KC_DEL
@@ -82,12 +83,17 @@ enum custom_keycodes {
  * \brief Pointer layer: trackball controls + mouse buttons.
  *
  * Accessed by holding Z (left) or / (right). Symmetrical layout.
- * Auto-sniping is enabled on this layer.
+ * Auto-sniping is enabled on this layer (SNIPING keys omitted as redundant).
+ *
+ * Top row:    undo / redo
+ * Home row:   mods + copy / paste
+ * Bottom row: drag-scroll, zoom -/+, drag-scroll toggle, browser back/fwd
+ * Thumbs:     mouse buttons
  */
 #define LAYOUT_LAYER_POINTER                                                                  \
-    QK_BOOT,  EE_CLR, XXXXXXX, DPI_MOD, S_D_MOD, S_D_MOD, DPI_MOD, XXXXXXX,  EE_CLR, QK_BOOT, \
-    KC_LGUI, KC_LCTL, KC_LALT, KC_LSFT, XXXXXXX, XXXXXXX, KC_RSFT, KC_RCTL, KC_LALT, KC_RGUI, \
-    _______, DRGSCRL, SNIPING, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, SNIPING, DRGSCRL, _______, \
+    QK_BOOT,  EE_CLR, LGUI(KC_Z), DPI_MOD, S_D_MOD, S_D_MOD, DPI_MOD, LSG(KC_Z),  EE_CLR, QK_BOOT, \
+    KC_LGUI, KC_LCTL, KC_LALT, KC_LSFT, LGUI(KC_C), LGUI(KC_V), KC_RSFT, KC_RCTL, KC_LALT, KC_RGUI, \
+    _______, DRGSCRL, LGUI(KC_MINS), DRG_TOG, KC_WBAK, KC_WFWD, DRG_TOG, LGUI(KC_EQL), DRGSCRL, _______, \
                       KC_BTN2, KC_BTN1, KC_BTN3, KC_BTN3, KC_BTN1
 
 /**
@@ -174,6 +180,7 @@ static void send_swedish_char(uint16_t keycode, bool shifted) {
             register_mods(MOD_BIT(KC_LALT));
             tap_code(KC_U);
             unregister_mods(MOD_BIT(KC_LALT));
+            wait_ms(30);
             if (shifted) {
                 register_mods(MOD_BIT(KC_LSFT));
                 tap_code(KC_A);
@@ -186,6 +193,7 @@ static void send_swedish_char(uint16_t keycode, bool shifted) {
             register_mods(MOD_BIT(KC_LALT));
             tap_code(KC_U);
             unregister_mods(MOD_BIT(KC_LALT));
+            wait_ms(30);
             if (shifted) {
                 register_mods(MOD_BIT(KC_LSFT));
                 tap_code(KC_O);
