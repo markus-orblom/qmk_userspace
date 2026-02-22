@@ -52,7 +52,7 @@ enum custom_keycodes {
  * Right hand: numpad layout (7-9, 4-6, 1-3, 0) + = ; operators
  */
 #define LAYOUT_LAYER_RIGHT                                                                    \
-    KC_EXCL,   KC_AT, KC_LCBR, KC_RCBR, KC_BSLS, KC_SLSH,    KC_7,    KC_8,    KC_9,  KC_EQL, \
+    KC_EXLM,   KC_AT, KC_LCBR, KC_RCBR, KC_BSLS, KC_SLSH,    KC_7,    KC_8,    KC_9,  KC_EQL, \
     KC_HASH,  KC_DLR, KC_LBRC, KC_RBRC,  KC_GRV, KC_ASTR,    KC_4,    KC_5,    KC_6, KC_SCLN, \
     KC_PERC, KC_CIRC, KC_LPRN, KC_RPRN, KC_TILD, KC_AMPR,    KC_1,    KC_2,    KC_3,    KC_0, \
                       _______, _______, _______, _______,  KC_DEL
