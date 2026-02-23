@@ -167,39 +167,39 @@ static void send_swedish_char(uint16_t keycode, bool shifted) {
         case SE_ARNG:
             if (shifted) {
                 register_mods(MOD_BIT(KC_LALT) | MOD_BIT(KC_LSFT));
-                tap_code(KC_A);
+                tap_code_delay(KC_A, 10);
                 unregister_mods(MOD_BIT(KC_LALT) | MOD_BIT(KC_LSFT));
             } else {
                 register_mods(MOD_BIT(KC_LALT));
-                tap_code(KC_A);
+                tap_code_delay(KC_A, 10);
                 unregister_mods(MOD_BIT(KC_LALT));
             }
             break;
         case SE_ADIA:
             // Option+U produces the umlaut dead key, then type the base letter.
             register_mods(MOD_BIT(KC_LALT));
-            tap_code(KC_U);
+            tap_code_delay(KC_U, 10);
             unregister_mods(MOD_BIT(KC_LALT));
-            wait_ms(30);
+            wait_ms(50);
             if (shifted) {
                 register_mods(MOD_BIT(KC_LSFT));
-                tap_code(KC_A);
+                tap_code_delay(KC_A, 10);
                 unregister_mods(MOD_BIT(KC_LSFT));
             } else {
-                tap_code(KC_A);
+                tap_code_delay(KC_A, 10);
             }
             break;
         case SE_ODIA:
             register_mods(MOD_BIT(KC_LALT));
-            tap_code(KC_U);
+            tap_code_delay(KC_U, 10);
             unregister_mods(MOD_BIT(KC_LALT));
-            wait_ms(30);
+            wait_ms(50);
             if (shifted) {
                 register_mods(MOD_BIT(KC_LSFT));
-                tap_code(KC_O);
+                tap_code_delay(KC_O, 10);
                 unregister_mods(MOD_BIT(KC_LSFT));
             } else {
-                tap_code(KC_O);
+                tap_code_delay(KC_O, 10);
             }
             break;
     }
